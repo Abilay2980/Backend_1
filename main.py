@@ -16,5 +16,11 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(todo_router)
 
+
+@app.get("/")
+async def info():
+    res = await db.fetch("select * from todo")
+    return{"detail":res}
+
 if __name__ == "__main__":
     uvicorn.run(app="main:app",reload =True)
