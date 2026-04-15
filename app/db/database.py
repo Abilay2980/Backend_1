@@ -26,11 +26,12 @@ class Database:
 
     async def fetch(self, query: str, *args):
         async with self.pool.acquire() as conn:
-            return await conn.fetch(query, *args)
+            rows=  await conn.fetch(query, *args)
+            result = [dict(row) for row in rows]
+            return result
 
     async def get_db_connection(self):
         async with self.pool.acquire() as conn:
             yield conn
 
 db = Database()
-

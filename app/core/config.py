@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
+    SECRET_WORD:str
 
     @property
     def ASYNC_DATABASE_URL(self):
