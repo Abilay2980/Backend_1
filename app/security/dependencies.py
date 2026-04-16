@@ -26,12 +26,13 @@ def encode_token(data:dict):
 def decode_token(to_decode:str):
     try:
         payload = jwt.decode(to_decode,key = secret_word, algorithms=[algorithm])
+        return payload
     except jwt.exceptions.ExpiredSignatureError:
         raise HTTPException(status_code=500,detail="expired signarute")
-    return payload
+    raise HTTPException(status_code=400,detail="damaged token")
     
     
 def get_access(token = Depends(oauth)):
-    sub = decode_token(token).get("sub")
-    return sub
+    payload = decode_token(token)
+    return payload
 

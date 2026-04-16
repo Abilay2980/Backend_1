@@ -3,9 +3,10 @@ from fastapi import FastAPI,Depends,HTTPException
 from contextlib import asynccontextmanager
 from app.api.endpoints.todo import todo_router
 from app.db.database import db
-from app.security.utils import get_user,verify_password,hash_password
-from app.security.dependencies import decode_token,encode_token
+from app.security.utils import get_user,verify_password,hash_password,get_roles
+from app.security.dependencies import decode_token,encode_token,get_access
 from app.api.schemas.security import User_login,User_db
+from app.api.endpoints.transfer import transfer_router
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -18,7 +19,7 @@ async def lifespan(app:FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(todo_router)
-
+app.include_router(transfer_router)
 
 @app.post("/register")
 async def register(user:User_login):
@@ -40,6 +41,10 @@ async def login(user:User_login):
     else:
         raise HTTPException(status_code=401, detail="Wrong password")
     return token
+
+@app.get("/info")
+async def get_info(payload:str = Depends(get_access)):
+    return{"Username":payload["sub"],"Roles":await get_roles(payload["sub"])}
 
         
     
