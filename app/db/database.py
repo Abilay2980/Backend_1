@@ -1,6 +1,6 @@
 import asyncpg
 from app.core.config import settings
-
+from contextlib import asynccontextmanager
 
 class Database:
     def __init__(self):
@@ -34,4 +34,9 @@ class Database:
         async with self.pool.acquire() as conn:
             yield conn
 
+    @asynccontextmanager
+    async def transaction(self, isolation='read_committed'):
+        async with self.pool.acquire() as conn:
+            async with conn.transaction(isolation=isolation):
+                yield conn
 db = Database()
