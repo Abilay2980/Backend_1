@@ -20,17 +20,16 @@ async def get_ex_rate():
 @transfer_router.post("/transfer_money")
 @Permission_Checker(["user"])
 async def transfer(transfer:Transfer,payload :str = Depends(get_access)):
-    try:
-        res = await transfer_money(payload.get("sub"),transfer.name,transfer.amount)
-        return{"detail":"Success","your_balance":res.get("sender new balance")}
-    except:
-        raise HTTPException(status_code=400)
+    res = await transfer_money(payload.get("sub"),transfer.name,transfer.amount)
+    return{"detail":"Success","your_balance":res.get("balance")}
+
 
 @transfer_router.post("/change_balance")
 @Permission_Checker(["admin"])
 async def change_balnce(transfer:Transfer,payload :str = Depends(get_access)):
-    res = await change_balance(transfer.name,transfer.amount)
-    return{"detail":"success","new_balance":res.get("bal")}
+
+    res = await change_balance(payload.get("sub"),transfer.name,transfer.amount)
+    return{"detail":"success","new_balance":res.get("balance")}
 
         
 
