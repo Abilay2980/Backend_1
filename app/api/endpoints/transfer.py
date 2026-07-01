@@ -5,6 +5,8 @@ from app.security.utils import ex_rate,transfer_money,change_balance
 from datetime import datetime   
 from app.security.dependencies import Permission_Checker,get_access
 from app.api.schemas.transfer import Transfer
+from app.cache.redis import cache
+from fastapi.encoders import jsonable_encoder
 
 transfer_router = APIRouter(
     prefix="/transfer",
@@ -14,8 +16,15 @@ transfer_router = APIRouter(
 
 @transfer_router.get("/exchange_rate")
 async def get_ex_rate():
+    cache_key = "exch_rate"
+    cached_rate = await cache.get(cache_key)
+    if cached_rate:
+        return cached_rate
     a = await ex_rate()
-    return{"base_currency": "KZT","updated_at":datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),"rates":a}
+    response = jsonable_encoder({"base_currency": "KZT","updated_at":datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),"rates":a})
+    await cache.set(cache_key,response)    
+
+    return response
 
 @transfer_router.post("/transfer_money")
 @Permission_Checker(["user"])

@@ -7,11 +7,16 @@ from app.security.utils import verify_password,hash_password,registration
 from app.security.dependencies import decode_token,encode_token,get_access,get_roles,get_user
 from app.api.schemas.security import User_login,User_db
 from app.api.endpoints.transfer import transfer_router
+from app.cache.redis import cache
+
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
+    global cache
     await db.connect()
+
     yield
+    await cache.redis.close()
     await db.disconnect()
 
 

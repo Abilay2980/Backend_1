@@ -3,9 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=find_dotenv(),
-    )
+    model_config = SettingsConfigDict(env_file=find_dotenv())
 
     DB_HOST: str
     DB_PORT: str
@@ -13,6 +11,7 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
     SECRET_WORD:str
+    CACHE_URL:str
 
     @property
     def ASYNC_DATABASE_URL(self):

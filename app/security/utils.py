@@ -68,6 +68,8 @@ async def change_balance(sender,receiver:str,amount:Decimal):
         except Exception as e:
             return{"detail":str(e)}
             raise HTTPException(status_code=400,detail="Bad Request3")
+
+
     
 
         
